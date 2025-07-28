@@ -1,0 +1,68 @@
+modules = ["python-3.11", "web", "bash"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["bash", "glibcLocales", "libxcrypt"]
+
+[deployment]
+deploymentTarget = "autoscale"
+run = ["streamlit", "run", "app.py", "--server.port", "5000"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Support Agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test App"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Simple Test"
+
+[[workflows.workflow]]
+name = "Support Agent"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run app.py --server.port 5000"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Test App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run test_app.py --server.port 5001"
+waitForPort = 5001
+
+[[workflows.workflow]]
+name = "Simple Test"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "streamlit run simple_test.py --server.port 5002"
+waitForPort = 5002
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[[ports]]
+localPort = 5002
+externalPort = 3001

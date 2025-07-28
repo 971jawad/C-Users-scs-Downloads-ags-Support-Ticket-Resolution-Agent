@@ -1,0 +1,56 @@
+[
+    {
+        "content": "Support tickets are typically responded to within 24 hours during business days. Priority and enterprise customers receive faster response times.",
+        "source": "support_sla_001",
+        "tags": ["support", "sla", "response"],
+        "priority": "high"
+    },
+    {
+        "content": "To create a support ticket, log into your account and navigate to the Support section. Provide detailed information about your issue.",
+        "source": "ticket_creation_001",
+        "tags": ["ticket", "creation", "support"],
+        "priority": "normal"
+    },
+    {
+        "content": "Our business hours are Monday-Friday 9 AM to 6 PM UTC. Emergency support is available 24/7 for critical issues.",
+        "source": "business_hours_001",
+        "tags": ["hours", "support", "availability"],
+        "priority": "normal"
+    },
+    {
+        "content": "Account upgrades and downgrades take effect immediately. Billing adjustments are prorated for the current billing period.",
+        "source": "account_changes_001",
+        "tags": ["account", "upgrade", "billing"],
+        "priority": "normal"
+    },
+    {
+        "content": "POLICY: Always maintain professional tone and empathy. Apologize for inconvenience but do not admit fault or liability. Escalate complaints about service quality to management.",
+        "source": "communication_policy_001",
+        "tags": ["communication", "tone", "policy", "escalation"],
+        "priority": "critical"
+    },
+    {
+        "content": "POLICY: Feature requests should be acknowledged and forwarded to product team. Do not promise timelines or confirm development plans. Use 'I'll share this with our team' language.",
+        "source": "feature_request_policy",
+        "tags": ["feature", "request", "product", "policy"],
+        "priority": "high"
+    },
+    {
+        "content": "Service level agreements (SLA): Response within 4 hours for critical issues, 24 hours for standard issues. Premium customers get priority handling and dedicated support.",
+        "source": "sla_terms_001",
+        "tags": ["sla", "response", "critical", "premium"],
+        "priority": "high"
+    },
+    {
+        "content": "POLICY: If unable to resolve issue after 2 attempts or customer requests escalation, transfer to appropriate specialist team. Document all troubleshooting steps attempted.",
+        "source": "escalation_policy_001",
+        "tags": ["escalation", "policy", "resolution", "documentation"],
+        "priority": "critical"
+    },
+    {
+        "content": "Documentation and training materials are available in our knowledge base. Customers can access self-service options for common issues like password reset and billing inquiries.",
+        "source": "self_service_001",
+        "tags": ["documentation", "self-service", "knowledge", "training"],
+        "priority": "normal"
+    }
+]

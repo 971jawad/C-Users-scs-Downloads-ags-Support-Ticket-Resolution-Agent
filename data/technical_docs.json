@@ -1,0 +1,56 @@
+[
+    {
+        "content": "If you're experiencing connection issues, first check your internet connection and try refreshing the page. Clear your browser cache if problems persist.",
+        "source": "connection_troubleshooting_001",
+        "tags": ["connection", "troubleshooting", "browser"],
+        "priority": "high"
+    },
+    {
+        "content": "API rate limits are set at 1000 requests per hour per API key. Exceeding this limit will result in HTTP 429 responses.",
+        "source": "api_limits_001",
+        "tags": ["api", "limits", "rate"],
+        "priority": "high"
+    },
+    {
+        "content": "To integrate our API, use the provided SDK or make direct HTTP requests to our REST endpoints. Authentication requires a valid API key in the header.",
+        "source": "api_integration_001",
+        "tags": ["api", "integration", "authentication"],
+        "priority": "normal"
+    },
+    {
+        "content": "Database maintenance windows occur every Sunday from 2-4 AM UTC. Plan accordingly for any scheduled operations.",
+        "source": "maintenance_schedule_001",
+        "tags": ["maintenance", "database", "schedule"],
+        "priority": "normal"
+    },
+    {
+        "content": "POLICY: Do not provide direct database access or SSH credentials to customers. Escalate data export requests to technical team. Only provide API-based solutions for data access.",
+        "source": "security_access_policy",
+        "tags": ["security", "access", "database", "policy"],
+        "priority": "critical"
+    },
+    {
+        "content": "System outages affecting multiple customers must be reported immediately to engineering team. Provide status page updates within 15 minutes of confirmed outage.",
+        "source": "outage_response_001",
+        "tags": ["outage", "response", "engineering", "status"],
+        "priority": "critical"
+    },
+    {
+        "content": "POLICY: Custom integrations requiring code review must be escalated to engineering. Do not provide unofficial API endpoints or undocumented features to customers.",
+        "source": "integration_policy_001",
+        "tags": ["integration", "policy", "engineering", "api"],
+        "priority": "critical"
+    },
+    {
+        "content": "Mobile app issues: First check app version and device compatibility. iOS requires version 14+, Android requires API level 26+. Guide users through app store update process.",
+        "source": "mobile_support_001",
+        "tags": ["mobile", "app", "compatibility", "update"],
+        "priority": "high"
+    },
+    {
+        "content": "Performance issues should be diagnosed with specific metrics: page load times, API response times, error rates. Request browser network logs for web app performance issues.",
+        "source": "performance_diagnosis_001",
+        "tags": ["performance", "metrics", "diagnosis", "logs"],
+        "priority": "high"
+    }
+]

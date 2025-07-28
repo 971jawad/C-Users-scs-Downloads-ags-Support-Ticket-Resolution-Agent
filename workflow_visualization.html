@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Workflow - Langfuse Style</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/reactflow@11.10.1/dist/index.umd.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/reactflow@11.10.1/dist/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .workflow-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+            height: 700px;
+            position: relative;
+        }
+        
+        .workflow-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 28px;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: -0.5px;
+        }
+        
+        .workflow-header::before {
+            content: "🤖";
+            font-size: 24px;
+        }
+        
+        .react-flow__viewport {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .custom-node {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            min-width: 180px;
+            min-height: 80px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            cursor: grab;
+            position: relative;
+        }
+        
+        .node-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+        
+        .node-header {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 6px;
+        }
+        
+        .node-icon {
+            font-size: 18px;
+            margin-right: 8px;
+        }
+        
+        .node-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a202c;
+            flex: 1;
+        }
+        
+        .node-badge {
+            font-size: 9px;
+            background: #3b82f6;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        
+        .node-subtitle {
+            font-size: 11px;
+            color: #4a5568;
+            line-height: 1.3;
+        }
+        
+        .custom-node:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 12px 32px rgba(0,0,0,0.08);
+            border-color: var(--node-accent, #3b82f6);
+            background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            z-index: 1000;
+        }
+        
+        .custom-node:active {
+            transform: translateY(-1px);
+            cursor: grabbing;
+        }
+        
+        .custom-node::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--node-accent);
+        }
+        
+        .custom-node::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--node-accent) 50%, transparent 100%);
+            opacity: 0.6;
+        }
+        
+        .node-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+            filter: none;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes flow {
+            0% { stroke-dashoffset: 20; }
+            100% { stroke-dashoffset: 0; }
+        }
+        
+        /* Animated flowing edges */
+        .react-flow__edge {
+            stroke-dasharray: 8, 4;
+            animation: flow 2s linear infinite;
+        }
+        
+        .react-flow__edge.animated {
+            stroke-dasharray: 8, 4;
+            animation: flow 1.5s linear infinite;
+        }
+        
+        .react-flow__edge-path {
+            stroke-width: 3;
+        }
+        
+        .node-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 2px;
+            line-height: 1.1;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .node-subtitle {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .node-description {
+            font-size: 9px;
+            color: #64748b;
+            font-weight: 400;
+            line-height: 1.2;
+            margin-top: 2px;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .react-flow__edge-path {
+            stroke: #4f46e5;
+            stroke-width: 3;
+            stroke-dasharray: 8, 4;
+            animation: flow 2s linear infinite;
+        }
+        
+        .react-flow__edge-label {
+            background: #4f46e5;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .node-subtitle {
+            font-size: 11px;
+            color: #718096;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        
+        .node-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--node-accent);
+            color: white;
+            font-size: 9px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        .node-status {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--node-accent);
+            animation: blink 1.5s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+        
+        /* Agent-specific styling with Langfuse-inspired colors */
+        .agent-input {
+            --node-accent: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: #3b82f6;
+        }
+        
+        .agent-classifier {
+            --node-accent: #8b5cf6;
+            background: linear-gradient(135deg, #f5f3ff 0%, #e9d5ff 100%);
+            border-color: #8b5cf6;
+        }
+        
+        .agent-retriever {
+            --node-accent: #06b6d4;
+            background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+            border-color: #06b6d4;
+        }
+        
+        .agent-generator {
+            --node-accent: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-color: #10b981;
+        }
+        
+        .agent-reviewer {
+            --node-accent: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: #f59e0b;
+        }
+        
+        .agent-output {
+            --node-accent: #22c55e;
+            background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+            border-color: #22c55e;
+        }
+        
+        .agent-escalation {
+            --node-accent: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border-color: #ef4444;
+        }
+        
+        /* Edge styling with flowing animations */
+        .react-flow__edge {
+            stroke: #8b5cf6;
+            stroke-width: 3;
+        }
+        
+        .react-flow__edge.animated {
+            stroke-dasharray: 8;
+            animation: dashdraw 1s linear infinite;
+        }
+        
+        .react-flow__edge-path {
+            stroke: #8b5cf6;
+            stroke-width: 3;
+            fill: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .react-flow__arrowhead {
+            fill: #8b5cf6;
+        }
+        
+        .react-flow__edge-label {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #4a5568;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes dashdraw {
+            from { stroke-dashoffset: 16; }
+            to { stroke-dashoffset: 0; }
+        }
+        
+        /* Enhanced controls */
+        .react-flow__controls {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            padding: 8px;
+        }
+        
+        .react-flow__controls-button {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            color: #4a5568;
+            font-size: 18px;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s;
+            margin: 2px;
+        }
+        
+        .react-flow__controls-button:hover {
+            background: #f8fafc;
+            border-color: #8b5cf6;
+            color: #8b5cf6;
+            transform: scale(1.1);
+        }
+        
+        /* Enhanced minimap */
+        .react-flow__minimap {
+            background: white;
+            border: 3px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+        
+        .react-flow__minimap-mask {
+            fill: rgba(139, 92, 246, 0.2);
+            stroke: #8b5cf6;
+            stroke-width: 2;
+        }
+        
+        .react-flow__minimap-node {
+            fill: #cbd5e0;
+            stroke: #a0aec0;
+        }
+        
+        /* Background pattern */
+        .react-flow__background {
+            background-color: #f8fafc;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="workflow-container">
+        <div class="workflow-header">
+            AI Agent Interaction Flow - Professional Workflow
+        </div>
+        <div id="reactflow"></div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useCallback, useMemo } = React;
+        const { ReactFlow, Controls, MiniMap, Background, useNodesState, useEdgesState, addEdge } = ReactFlowLib;
+
+        // Draggable Rectangular Node with React Flow Handles
+        const AgentNode = ({ data, isConnectable }) => {
+            return (
+                <div className={`custom-node ${data.className}`}>
+                    <ReactFlowLib.Handle
+                        type="target"
+                        position={ReactFlowLib.Position.Top}
+                        style={{ background: '#555' }}
+                        isConnectable={isConnectable}
+                    />
+                    <div className="node-content">
+                        <div className="node-header">
+                            <span className="node-icon">{data.icon}</span>
+                            <strong className="node-title">{data.title}</strong>
+                            {data.badge && <span className="node-badge">{data.badge}</span>}
+                        </div>
+                        <div className="node-subtitle">{data.subtitle}</div>
+                    </div>
+                    <ReactFlowLib.Handle
+                        type="source"
+                        position={ReactFlowLib.Position.Bottom}
+                        style={{ background: '#555' }}
+                        isConnectable={isConnectable}
+                    />
+                </div>
+            );
+        };
+
+        const nodeTypes = {
+            agent: AgentNode,
+        };
+
+        // LangGraph Multi-Agent System - Exact Match to Your Architecture
+        const initialNodes = [
+            {
+                id: 'user_input',
+                type: 'agent',
+                position: { x: 50, y: 180 },
+                data: {
+                    icon: '📥',
+                    title: 'User Input',
+                    subtitle: 'Ticket Submission Entry Point',
+                    description: 'Customer submits support ticket with subject and description',
+                    badge: 'START',
+                    className: 'agent-input'
+                }
+            },
+            {
+                id: 'llm_classifier',
+                type: 'agent',
+                position: { x: 300, y: 100 },
+                data: {
+                    icon: '🧠',
+                    title: 'LLM Classifier',
+                    subtitle: 'Gemini 2.0 Flash Category Detection',
+                    description: 'AI categorizes into billing, technical, security, or general support',
+                    badge: 'AI',
+                    className: 'agent-classifier'
+                }
+            },
+            {
+                id: 'refinement_tool',
+                type: 'agent',
+                position: { x: 300, y: 20 },
+                data: {
+                    icon: '🔄',
+                    title: 'Refinement Tool',
+                    subtitle: 'Content Enhancement Retry Logic',
+                    description: 'Iterative improvement with max 2 retry attempts',
+                    badge: 'RETRY',
+                    className: 'agent-classifier'
+                }
+            },
+            {
+                id: 'rag_system',
+                type: 'agent',
+                position: { x: 50, y: 320 },
+                data: {
+                    icon: '🔍',
+                    title: 'RAG System',
+                    subtitle: 'FAISS + BGE Embeddings Knowledge Retrieval',
+                    description: 'Vector search finds relevant policy documents',
+                    badge: 'VECTOR',
+                    className: 'agent-retriever'
+                }
+            },
+            {
+                id: 'llm_generator',
+                type: 'agent',
+                position: { x: 350, y: 320 },
+                data: {
+                    icon: '✍️',
+                    title: 'LLM Generator',
+                    subtitle: 'Gemini 2.0 Text Response Creation',
+                    description: 'AI generates personalized response using context',
+                    badge: 'AI',
+                    className: 'agent-generator'
+                }
+            },
+            {
+                id: 'llm_reviewer',
+                type: 'agent',
+                position: { x: 650, y: 320 },
+                data: {
+                    icon: '⚖️',
+                    title: 'LLM Reviewer',
+                    subtitle: 'Independent Gemini Quality Assurance',
+                    description: 'Separate AI reviews for accuracy and compliance',
+                    badge: 'QA',
+                    className: 'agent-reviewer'
+                }
+            },
+            {
+                id: 'success_output',
+                type: 'agent',
+                position: { x: 850, y: 180 },
+                data: {
+                    icon: '✅',
+                    title: 'Success Output',
+                    subtitle: 'Customer Response Final Delivery',
+                    description: 'Quality-approved response delivered to customer',
+                    badge: 'SUCCESS',
+                    className: 'agent-output'
+                }
+            },
+            {
+                id: 'human_escalation',
+                type: 'agent',
+                position: { x: 850, y: 460 },
+                data: {
+                    icon: '👨‍💼',
+                    title: 'Human Escalation',
+                    subtitle: 'Failed Processing Manual Review',
+                    description: 'Complex cases escalated via CSV logging',
+                    badge: 'HUMAN',
+                    className: 'agent-escalation'
+                }
+            }
+        ];
+
+        // Professional Flowing Directional Connections - Animated & Clean
+        const initialEdges = [
+            {
+                id: 'user-classifier',
+                source: 'user_input',
+                target: 'llm_classifier',
+                animated: true,
+                style: { 
+                    stroke: '#3b82f6', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4',
+                    animation: 'flow 2s linear infinite'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#3b82f6' },
+                label: 'content →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'smoothstep'
+            },
+            {
+                id: 'classifier-rag',
+                source: 'llm_classifier',
+                target: 'rag_system',
+                animated: true,
+                style: { 
+                    stroke: '#8b5cf6', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#8b5cf6' },
+                label: 'category →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'smoothstep'
+            },
+            {
+                id: 'rag-generator',
+                source: 'rag_system',
+                target: 'llm_generator',
+                animated: true,
+                style: { 
+                    stroke: '#06b6d4', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#06b6d4' },
+                label: 'context →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'straight'
+            },
+            {
+                id: 'generator-reviewer',
+                source: 'llm_generator',
+                target: 'llm_reviewer',
+                animated: true,
+                style: { 
+                    stroke: '#10b981', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#10b981' },
+                label: 'generated →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'straight'
+            },
+            {
+                id: 'reviewer-success',
+                source: 'llm_reviewer',
+                target: 'success_output',
+                animated: true,
+                style: { 
+                    stroke: '#22c55e', 
+                    strokeWidth: 4,
+                    strokeDasharray: '10,5'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#22c55e' },
+                label: '✓ approved →',
+                labelStyle: { fontSize: '10px', fontWeight: '600', color: '#22c55e' },
+                type: 'smoothstep'
+            },
+            {
+                id: 'reviewer-refinement',
+                source: 'llm_reviewer',
+                target: 'refinement_tool',
+                animated: true,
+                style: { 
+                    stroke: '#f59e0b', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#f59e0b' },
+                label: 'review →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'smoothstep'
+            },
+            {
+                id: 'refinement-classifier',
+                source: 'refinement_tool',
+                target: 'llm_classifier',
+                animated: true,
+                style: { 
+                    stroke: '#f59e0b', 
+                    strokeWidth: 2,
+                    strokeDasharray: '6,3'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#f59e0b' },
+                label: '🔄 retry →',
+                labelStyle: { fontSize: '10px', fontWeight: '500' },
+                type: 'smoothstep'
+            },
+            {
+                id: 'reviewer-escalation',
+                source: 'llm_reviewer',
+                target: 'human_escalation',
+                animated: true,
+                style: { 
+                    stroke: '#ef4444', 
+                    strokeWidth: 3,
+                    strokeDasharray: '8,4'
+                },
+                markerEnd: { type: 'arrowclosed', color: '#ef4444' },
+                label: '⚠️ escalated →',
+                labelStyle: { fontSize: '10px', fontWeight: '600', color: '#ef4444' },
+                type: 'smoothstep'
+            }
+        ];
+
+        const AgentWorkflow = () => {
+            const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+            const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
+            const onConnect = useCallback((params) =>
+                setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
+                [setEdges]
+            );
+
+            const proOptions = { hideAttribution: true };
+
+            return (
+                <ReactFlow
+                    nodes={nodes}
+                    edges={edges}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onConnect={onConnect}
+                    nodeTypes={nodeTypes}
+                    proOptions={proOptions}
+                    fitView
+                    attributionPosition="bottom-left"
+                    defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+                    nodesDraggable={true}
+                    nodesConnectable={true}
+                    elementsSelectable={true}
+                    connectionLineType="smoothstep"
+                    connectionLineStyle={{ stroke: '#3b82f6', strokeWidth: 2, strokeDasharray: '8,4' }}
+                    defaultEdgeOptions={{
+                        animated: true,
+                        style: { strokeWidth: 3, strokeDasharray: '8,4' }
+                    }}
+                >
+                    <Controls 
+                        position="top-right"
+                        showZoom={true}
+                        showFitView={true}
+                        showInteractive={true}
+                    />
+                    <MiniMap 
+                        position="bottom-right"
+                        nodeStrokeColor="#8b5cf6"
+                        nodeColor="#3b82f6"
+                        nodeBorderRadius={8}
+                        maskColor="rgba(59, 130, 246, 0.1)"
+                    />
+                    <Background 
+                        variant="dots" 
+                        gap={20} 
+                        size={1}
+                        color="#e2e8f0"
+                    />
+                </ReactFlow>
+            );
+        };
+
+        ReactDOM.render(<AgentWorkflow />, document.getElementById('reactflow'));
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+</html>

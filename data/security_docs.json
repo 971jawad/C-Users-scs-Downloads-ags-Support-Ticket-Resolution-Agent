@@ -1,0 +1,56 @@
+[
+    {
+        "content": "Two-factor authentication (2FA) is required for all accounts. Set up 2FA using an authenticator app or SMS verification.",
+        "source": "2fa_policy_001",
+        "tags": ["2fa", "authentication", "security"],
+        "priority": "high"
+    },
+    {
+        "content": "Passwords must be at least 12 characters long and include uppercase, lowercase, numbers, and special characters.",
+        "source": "password_policy_001",
+        "tags": ["password", "policy", "requirements"],
+        "priority": "high"
+    },
+    {
+        "content": "If you suspect your account has been compromised, immediately change your password and contact our security team.",
+        "source": "account_security_001",
+        "tags": ["security", "compromise", "incident"],
+        "priority": "high"
+    },
+    {
+        "content": "All data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption standards.",
+        "source": "encryption_standards_001",
+        "tags": ["encryption", "data", "security"],
+        "priority": "normal"
+    },
+    {
+        "content": "POLICY: Security incidents must be escalated immediately to security team. Do not advise customers to disable security features. Never share internal security procedures or vulnerability details.",
+        "source": "security_incident_policy",
+        "tags": ["security", "incident", "policy", "escalation"],
+        "priority": "critical"
+    },
+    {
+        "content": "POLICY: Account lockouts require identity verification before reset. For suspicious activity, escalate to security team. Do not unlock accounts without proper verification process.",
+        "source": "account_lockout_policy",
+        "tags": ["lockout", "verification", "policy", "security"],
+        "priority": "critical"
+    },
+    {
+        "content": "Data breaches or suspected unauthorized access must be reported within 1 hour to security team. Provide all available logs and affected account information.",
+        "source": "breach_response_001",
+        "tags": ["breach", "unauthorized", "response", "logs"],
+        "priority": "critical"
+    },
+    {
+        "content": "GDPR compliance: Customers have right to data export, deletion, and portability. Data deletion requests require 7-day processing time. Escalate EU customer data requests to compliance team.",
+        "source": "gdpr_compliance_001",
+        "tags": ["gdpr", "privacy", "data", "compliance"],
+        "priority": "high"
+    },
+    {
+        "content": "Single Sign-On (SSO) setup requires domain verification and admin approval. SAML and OIDC protocols supported. Technical setup must be handled by integration team.",
+        "source": "sso_setup_001",
+        "tags": ["sso", "saml", "oidc", "integration"],
+        "priority": "high"
+    }
+]

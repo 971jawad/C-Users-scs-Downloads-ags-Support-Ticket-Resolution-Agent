@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  support-agent:
+    build: .
+    ports:
+      - "5000:5000"
+      - "8000:8000"
+      - "2024:2024"  # LangGraph dev server
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PYTHONPATH=/app
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_PROJECT=${LANGCHAIN_PROJECT:-support-agent}
+    volumes:
+      - .:/app
+      - ./logs:/app/logs
+      - ./data:/app/data
+      - ./indexes:/app/indexes
+      - escalation_log:/app/escalation_log.csv
+    working_directory: /app
+    command: >
+      sh -c "
+        echo 'Starting support agent system...' &&
+        python -c 'from support_agent.utils import setup_logging; setup_logging()' &&
+        echo 'Initializing RAG system...' &&
+        python -c 'from support_agent.rag_system import RAGSystem; rag = RAGSystem(); print(\"RAG system initialized\")' &&
+        echo 'Starting Streamlit dashboard...' &&
+        streamlit run app.py --server.port 5000 --server.address 0.0.0.0 --server.headless true
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - support-agent-network
+
+  langgraph-dev:
+    build: .
+    ports:
+      - "2025:2025"  # Debug port
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app
+    working_directory: /app
+    command: >
+      sh -c "
+        echo 'Installing LangGraph CLI...' &&
+        pip install langgraph-cli &&
+        echo 'Starting LangGraph development server...' &&
+        langgraph dev --host 0.0.0.0 --port 2024 --debug-port 2025
+      "
+    depends_on:
+      - support-agent
+    profiles:
+      - dev
+    networks:
+      - support-agent-network
+
+volumes:
+  escalation_log:
+    driver: local
+
+networks:
+  support-agent-network:
+    driver: bridge

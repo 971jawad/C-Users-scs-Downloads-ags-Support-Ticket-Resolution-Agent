@@ -1,0 +1,50 @@
+[
+    {
+        "content": "Billing cycles run monthly from the 1st to the last day of each month. Charges are processed on the first business day following the billing period.",
+        "source": "billing_policy_001",
+        "tags": ["billing", "cycles", "payment"],
+        "priority": "high"
+    },
+    {
+        "content": "To request a refund, submit a support ticket within 30 days of the charge. Include your transaction ID and reason for the refund request.",
+        "source": "refund_policy_001",
+        "tags": ["refund", "policy", "support"],
+        "priority": "high"
+    },
+    {
+        "content": "Payment methods accepted include major credit cards, PayPal, and bank transfers. Payment information can be updated in your account settings.",
+        "source": "payment_methods_001",
+        "tags": ["payment", "methods", "account"],
+        "priority": "normal"
+    },
+    {
+        "content": "Late payment fees apply after 15 days past due. A grace period of 7 days is provided before service suspension.",
+        "source": "late_payment_001",
+        "tags": ["late", "fees", "suspension"],
+        "priority": "high"
+    },
+    {
+        "content": "POLICY: Refunds must be approved by billing manager for amounts over $500. Automatic refunds apply for amounts under $100 within 14 days. Never promise immediate refunds without verification.",
+        "source": "refund_policy_002",
+        "tags": ["refund", "policy", "approval", "limits"],
+        "priority": "critical"
+    },
+    {
+        "content": "POLICY: Billing disputes must include transaction ID, date, and amount. Escalate to billing team if customer provides valid dispute documentation. Do not authorize refunds over $1000.",
+        "source": "billing_dispute_policy",
+        "tags": ["dispute", "policy", "escalation", "limits"],
+        "priority": "critical"
+    },
+    {
+        "content": "Subscription downgrades take effect at the next billing cycle. Upgrades are immediate with prorated charges. Free trials cannot be extended beyond initial period.",
+        "source": "subscription_changes_001",
+        "tags": ["subscription", "upgrade", "downgrade", "trial"],
+        "priority": "high"
+    },
+    {
+        "content": "POLICY: Do not provide pricing information for custom enterprise plans. Direct customers to sales team for pricing discussions. Standard plan prices are available on website.",
+        "source": "pricing_policy_001",
+        "tags": ["pricing", "enterprise", "sales", "policy"],
+        "priority": "critical"
+    }
+]

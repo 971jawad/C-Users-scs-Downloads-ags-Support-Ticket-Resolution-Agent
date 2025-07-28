@@ -1,0 +1,216 @@
+Summary of Your Stack & Constraints
+
+Element	Choice / Constraint
+
+Framework	LangGraph CLI
+LLM	Gemini Flash 2.0 via Gemini CLI
+Retrieval	RAG (FAISS + local embeddings)
+Environment	Docker Desktop, optional PowerShell
+Model constraints	Must avoid hallucination, be fast, free
+Task complexity	Multi-step graph: classify → retrieve → generate → review → retry loop (max 2)
+
+
+
+---
+
+🔑 Best Practices per Component
+
+
+---
+
+1. 🚀 LangGraph Node Design
+
+Design each step as a modular LangGraph node. Keep each function:
+
+Small (single responsibility)
+
+Traceable (log inputs/outputs)
+
+Re-entrant (able to retry cleanly)
+
+
+Node Name	Best Practice
+
+ticket_input	Validate schema (subject + description)
+classify_node	Use Gemini Flash with very clear label list
+retrieve_context	Query per-category vector store (e.g. technical.faiss)
+draft_response	Prompt Gemini with: ticket + top 3 docs
+review_response	Use structured prompt checklist (avoid vague feedback)
+retry_loop	Log rejection reasons; max 2 tries
+escalate_case	CSV log with full trace (ticket + drafts + feedback)
+
+
+
+---
+
+2. 🧠 Prompt Engineering
+
+Gemini Flash 2.0 is fast but can hallucinate if not guided clearly. Best practices:
+
+Use This	Avoid This
+
+✅ System prompt with role: “You are a support QA reviewer.”	❌ Open-ended creative prompts
+✅ Provide strict options (e.g., “Choose one: Billing, Technical…”)	❌ Asking LLM to "guess" from vague data
+✅ Ask Yes/No + explanation during review	❌ Ask “Is this good?”
+
+
+Example (Classification):
+
+Classify this support ticket into one of the following:
+Billing, Technical, Security, General
+
+Subject: Login failure on mobile
+Description: I can't log into the app since updating my phone
+
+Answer (label only):
+
+
+---
+
+3. 📚 RAG Best Practices (Context Retrieval)
+
+Use category-specific indexes: billing_index, tech_index, etc.
+
+Limit retrieval to top 3 documents
+
+Use dense embeddings like:
+
+all-MiniLM-L6-v2
+
+gte-small
+
+bge-small-en-v1.5 (strong + free)
+
+
+Make the retrieval query dynamic:
+
+query = f"{ticket['subject']} {ticket['description']}"
+
+Always include retrieved docs in prompt to Gemini:
+
+Use the following context to answer:
+[doc1]
+[doc2]
+...
+
+
+
+---
+
+4. 🔁 Review Loop & Retry Strategy
+
+Rule	Best Practice
+
+Max retries	✅ 2 max attempts
+Feedback	✅ Let reviewer give specific failure reason
+Retry logic	✅ Use reviewer feedback to refine query
+Loop control	✅ Implement a counter inside LangGraph node
+
+
+Review Checklist Prompt:
+
+Evaluate this support response:
+
+1. Is it accurate based on context?
+2. Does it violate policy? (e.g., refund promises, security advice)
+3. Is it clear and helpful?
+
+Response:
+[Insert response]
+
+Answer YES/NO for each, then feedback:
+
+
+---
+
+5. 🧱 Docker Setup Best Practices
+
+Pin Python version (python:3.11-slim)
+
+Install dependencies via requirements.txt
+
+Mount .gemini config if using Gemini CLI
+
+Expose CLI port if needed for debugging (EXPOSE 8000)
+
+
+Example command:
+
+docker run -it -v ~/.gemini:/root/.gemini langgraph-agent
+
+
+---
+
+6. 🛠️ LangGraph CLI Usage Tips
+
+Use Case	Best Practice
+
+Local dev	Use langgraph dev start inside Docker
+Testing	Keep each LangGraph node testable via unit test
+Debugging	Use print logs or trace logging in each node
+CLI scripts	You can script test cases via PowerShell too
+
+
+
+---
+
+7. 📁 Escalation Handling (Optional)
+
+If response fails after 2 attempts:
+
+Write to escalation_log.csv:
+
+Ticket subject
+
+Description
+
+All draft attempts
+
+Reviewer feedback
+
+
+Notify in final output: “Escalated to human agent.”
+
+
+
+---
+
+8. 🧪 Testing Coverage
+
+Test for:
+
+Scenario	Expected
+
+✅ Happy path (review passes first try)	Response returned
+✅ Retry path (review fails once)	Re-draft works
+✅ Retry fails twice	Escalation triggered
+✅ Classification edge case	Correct fallback
+❌ No docs retrieved	Graceful error
+❌ Invalid ticket format	Caught early
+
+
+
+---
+
+9. 🔐 Avoid Hallucinations
+
+Strategy	Reason
+
+✅ Use Gemini Flash only on short, grounded tasks	Less prone to drift
+✅ Feed relevant docs directly into prompt	Avoids model guessing
+✅ Never let LLM “create policy”	Reviewer should check, not invent rules
+✅ Use structured outputs when possible	"Label only", "Yes/No", etc.
+
+
+
+---
+
+✅ Final Checklist Before Demo
+
+✅ Modular LangGraph nodes
+✅ Clean RAG stack (per-category FAISS)
+✅ Gemini prompts structured and safe
+✅ Retry logic tested (with feedback loop)
+✅ Escalation via CSV
+✅ CLI tested via Docker + PowerShell
+✅ README + code + demo ready
