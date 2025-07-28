@@ -109,12 +109,7 @@ The system includes comprehensive policy documents for each category:
 5. **Access the interface**
    Open http://localhost:5000 in your browser
 
-### Using Replit
 
-1. Fork this Repl
-2. Add your GEMINI_API_KEY to Replit Secrets
-3. Click "Run" - the Streamlit app will start automatically
-4. Use the provided examples or submit your own tickets
 
 ## 🎮 Usage Examples
 
@@ -152,22 +147,14 @@ The system includes comprehensive policy documents for each category:
 
 ### LangStudio Interactive Workflow Diagram Setup:
 
-1. **Add your LANGCHAIN_API_KEY to environment variables** ✓
 2. **Add your GEMINI_API_KEY to environment variables** ✓  
 3. **Submit a ticket through the Streamlit interface**
 4. **Click the "View Live Workflow" link that appears during processing**
 5. **Watch your ticket process in real-time with full interactivity**
 
-**🎯 Live Demo**: Experience the complete workflow with **interactive nodes**, **real-time state transitions**, and **live execution monitoring** in [LangStudio](https://smith.langchain.com/studio).
 
-### LangStudio Diagram Features:
 
-- **Real-time Execution Traces**: See each node execute step-by-step
-- **State Transitions**: Watch data flow between classification → RAG → generation → review
-- **Timing Analysis**: Performance metrics for each processing step
-- **Decision Logic**: Visualize conditional routing (retry vs approve vs escalate)
-- **Error Tracking**: Debug failures with detailed execution context
-- **Retry Pattern Analysis**: See how feedback loops improve responses
+
 
 ### Static Workflow Overview:
 
@@ -189,7 +176,7 @@ Retry Limit? → [Final Output] or [Escalate]
 [Human CSV] ← [Customer Response]
 ```
 
-**Interactive LangStudio Advantage**: The LangStudio visualization provides 100x more detail than this static diagram, showing execution traces, timing data, state changes, and decision logic for enterprise-level monitoring and debugging.
+
 
 ## 🏗️ Why Built This Way
 
@@ -266,9 +253,6 @@ The Streamlit interface provides:
 
 ## 🔄 Interactive Workflow Visualization
 
-### Enterprise-Level LangStudio Integration
-
-Experience the complete workflow with **interactive nodes**, **real-time state transitions**, and **live execution monitoring** in [LangStudio](https://smith.langchain.com/studio/thread?mode=graph&project=Support-Ticket-Resolution-Agent).
 
 **Key Features:**
 - **Real-time Execution Tracing**: Watch each ticket flow through the system live
@@ -278,11 +262,6 @@ Experience the complete workflow with **interactive nodes**, **real-time state t
 - **Error Debugging**: Identify bottlenecks and failure points instantly
 - **Retry Logic Visualization**: Track the complete retry loop with detailed reasoning
 
-**Setup Instructions:**
-1. Add your `LANGCHAIN_API_KEY` to environment variables
-2. Submit a ticket through the Streamlit interface
-3. Click the **"View Live Workflow"** link in the sidebar
-4. Watch your ticket process in real-time with full interactivity
 
 **Static Overview:**
 ```
