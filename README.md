@@ -286,6 +286,8 @@ Retry Limit? → [Final Output] or [Escalate]
 
 ## 🎥 Demo Features
 
+live demo video:https:[//www.loom.com/share/41dc703181694b94837082e0b18eb776](https://www.loom.com/share/41dc703181694b94837082e0b18eb776?sid=17ec076c-d18a-4fad-922b-c97f2a5e7a1a)
+
 The system demonstrates:
 - **Automatic Classification**: No manual category selection needed
 - **Policy Compliance**: Responses follow documented procedures
